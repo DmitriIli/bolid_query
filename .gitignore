@@ -9,6 +9,6 @@ venv/
 lib/
 build/
 dist/
-
+.env
 # VS Code-specific ignores (optional - see notes below)
 .vscode/
