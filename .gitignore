@@ -1,0 +1,14 @@
+# Python-specific ignores
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+lib/
+build/
+dist/
+
+# VS Code-specific ignores (optional - see notes below)
+.vscode/

@@ -1,0 +1,42 @@
+SELECT DISTINCT
+	'Bolid'
+	,'Nanolek'
+	,'Проходные'
+	,[Orion].[dbo].[pList].[name] as 'Фамилия'
+	,[Orion].[dbo].[pList].[firstname] as 'Имя'
+	,[Orion].[dbo].[pList].[midname] as 'Отчество'	
+	,[Orion].[dbo].[pCompany].[Name] as 'Наименование компании'
+	,[Orion].[dbo].[pDivision].[Name] as 'Подразделение'
+	,[Orion].[dbo].[pPost].[Name] as 'Должность'
+	,convert(varchar(10),cast([Orion].[dbo].[pLogData].[TimeVal] as date), 105) as 'Дата'
+	,cast(min([Orion].[dbo].[pLogData].[TimeVal]) as timestamp) as 'Первый вход'
+	,cast(max([Orion].[dbo].[pLogData].[TimeVal]) as timestamp) as 'Последний выход'
+	,([Orion].[dbo].[pList].[name]+' '+[Orion].[dbo].[pList].[firstname]+' '+[Orion].[dbo].[pList].[midname]) as 'Полное ФИО сотрудника'
+	
+
+
+from [Orion].[dbo].[pLogData] 
+		join [Orion].[dbo].[pList] on ([Orion].[dbo].[pList].[id] = [Orion].[dbo].[pLogData].[hozorgan]) 
+			LEFT OUTER JOIN [Orion].[dbo].[pPost] ON ([Orion].[dbo].[pList].[Post] = [Orion].[dbo].[pPost].[ID]) 
+				LEFT OUTER JOIN [Orion].[dbo].[pDivision] ON ([Orion].[dbo].[pList].[Section] = [Orion].[dbo].[pDivision].[ID]) 
+					LEFT OUTER JOIN [Orion].[dbo].[pCompany] ON ([Orion].[dbo].[pList].[Company] = [Orion].[dbo].[pCompany].[ID])
+						LEFT JOIN [Orion].[dbo].[AcessPoint] ON ([Orion].[dbo].[AcessPoint].[GIndex] = [Orion].[dbo].[pLogData].[DoorIndex])
+							LEFT JOIN [Orion].[dbo].[Events] ON ([Orion].[dbo].[Events].[Event] = [Orion].[dbo].[pLogData].[Event])
+					
+WHERE   
+	([Orion].[dbo].[plogdata].[TimeVal] BETWEEN @start+' 00:00:00.000' AND @end+' 23:59:59.000')
+		AND [Orion].[dbo].[pLogData].[DoorIndex] IN (32,33,34,35)                                     
+   
+          
+group by 
+	[Orion].[dbo].[pLogData].[hozorgan]
+	,[Orion].[dbo].[pList].[name]
+	,[Orion].[dbo].[pList].[firstname]
+	,[Orion].[dbo].[pList].[midname]
+	,cast([Orion].[dbo].[plogdata].[timeval] as date)
+	,[Orion].[dbo].[pdivision].[name] 
+	,[Orion].[dbo].[pcompany].[name]
+	,[Orion].[dbo].[ppost].[name]
+
+order by  [Orion].[dbo].[pList].[name],[Orion].[dbo].[pList].[firstname],[Orion].[dbo].[pList].[midname] ,cast(min([Orion].[dbo].[pLogData].[TimeVal]) as timestamp)  
+	,cast(max([Orion].[dbo].[pLogData].[TimeVal]) as timestamp) 
